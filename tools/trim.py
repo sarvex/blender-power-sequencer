@@ -26,6 +26,6 @@ class POWER_SEQUENCER_TOOL_Trim(WorkSpaceTool):
         ),
     )
 
-    def draw_settings(context, layout, tool):
+    def draw_settings(self, layout, tool):
         props = tool.operator_properties("power_sequencer.mouse_trim")
         layout.prop(props, "mode")

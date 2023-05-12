@@ -77,7 +77,8 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
             self.speed_effect_add(context, sequences)
 
         self.report(
-            {"INFO"}, "Successfully processed " + str(len(selection_blocks)) + " selection blocks"
+            {"INFO"},
+            f"Successfully processed {len(selection_blocks)} selection blocks",
         )
         return {"FINISHED"}
 
@@ -107,5 +108,5 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
         meta_strip.select = True
         sequencer.meta_make()
         sequence_editor.active_strip.name = (
-            meta_strip.sequences[0].name + " " + str(self.speed_factor) + "x"
+            f"{meta_strip.sequences[0].name} {str(self.speed_factor)}x"
         )

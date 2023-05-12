@@ -45,7 +45,7 @@ class POWER_SEQUENCER_OT_copy_markers_as_timecodes(bpy.types.Operator):
             time = dt.datetime(year=1, month=1, day=1) + dt.timedelta(
                 seconds=marker.frame / framerate
             )
-            markers_as_timecodes.append(time.strftime(time_format) + " " + marker.name)
+            markers_as_timecodes.append(f"{time.strftime(time_format)} {marker.name}")
 
         bpy.context.window_manager.clipboard = "\n".join(markers_as_timecodes)
         return {"FINISHED"}

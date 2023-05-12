@@ -37,11 +37,11 @@ class POWER_SEQUENCER_OT_crossfade_edit(bpy.types.Operator):
     def execute(self, context):
         active = context.scene.sequence_editor.active_strip
         if active.type not in self.crossfade_types:
-            effect = self.find_cross_effect(context, active)
-            if not effect:
-                return {"CANCELLED"}
-            active = context.scene.sequence_editor.active_strip = effect
+            if effect := self.find_cross_effect(context, active):
+                active = context.scene.sequence_editor.active_strip = effect
 
+            else:
+                return {"CANCELLED"}
         bpy.ops.sequencer.select_all(action="DESELECT")
         active.select = True
         active.input_1.select_right_handle = True
@@ -65,9 +65,8 @@ class POWER_SEQUENCER_OT_crossfade_edit(bpy.types.Operator):
         for s in effect_sequences:
             if s.input_1.name == sequence.name:
                 found_effect_strips.append(s)
-            if s.input_count == 2:
-                if s.input_2.name == sequence.name:
-                    found_effect_strips.append(s)
+            if s.input_count == 2 and s.input_2.name == sequence.name:
+                found_effect_strips.append(s)
         for e in found_effect_strips:
             if e.type not in self.crossfade_types:
                 continue

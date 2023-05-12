@@ -41,7 +41,7 @@ def setup_addon_modules(path, package_name, ignore_packages=[], ignore_modules=[
     def import_submodules(names):
         modules = []
         for name in names:
-            modules.append(importlib.import_module("." + name, package_name))
+            modules.append(importlib.import_module(f".{name}", package_name))
         return modules
 
     def reload_modules(modules):

@@ -40,15 +40,7 @@ class POWER_SEQUENCER_OT_set_preview_between_markers(bpy.types.Operator):
             return {"CANCELLED"}
 
         frame_start = previous_marker.frame if previous_marker else 0
-        if next_marker:
-            frame_end = next_marker.frame
-        else:
-            from operator import attrgetter
-
-            frame_end = max(
-                context.scene.sequence_editor.sequences, key=attrgetter("frame_final_end")
-            ).frame_final_end
-
+        frame_end = next_marker.frame
         from .utils.functions import set_preview_range
 
         set_preview_range(context, frame_start, frame_end)

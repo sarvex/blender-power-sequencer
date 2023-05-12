@@ -63,7 +63,27 @@ class POWER_SEQUENCER_OT_jump_to_cut(bpy.types.Operator):
 
         # First find the closest cut, then if that sequence has an associated
         # fcurve, loop through the curve's keyframes.
-        if self.direction == "RIGHT":
+        if self.direction == "LEFT":
+            for s in context.sequences:
+                if s.frame_final_start >= frame_current:
+                    continue
+
+                candidates = [frame_target, s.frame_final_start]
+                if s.frame_final_end < frame_current:
+                    candidates.append(s.frame_final_end)
+
+                frame_target = max(candidates)
+
+                for f in fcurves:
+                    if s.name not in f.data_path:
+                        continue
+
+                    for k in f.keyframe_points:
+                        frame = k.co[0]
+                        if frame < frame_current:
+                            frame_target = max(frame_target, frame)
+
+        elif self.direction == "RIGHT":
             frame_target = 100_000_000
             for s in context.sequences:
                 if s.frame_final_end <= frame_current:
@@ -81,30 +101,8 @@ class POWER_SEQUENCER_OT_jump_to_cut(bpy.types.Operator):
 
                     for k in f.keyframe_points:
                         frame = k.co[0]
-                        if frame <= frame_current:
-                            continue
-                        frame_target = min(frame_target, frame)
-
-        elif self.direction == "LEFT":
-            for s in context.sequences:
-                if s.frame_final_start >= frame_current:
-                    continue
-
-                candidates = [frame_target, s.frame_final_start]
-                if s.frame_final_end < frame_current:
-                    candidates.append(s.frame_final_end)
-
-                frame_target = max(candidates)
-
-                for f in fcurves:
-                    if s.name not in f.data_path:
-                        continue
-
-                    for k in f.keyframe_points:
-                        frame = k.co[0]
-                        if frame >= frame_current:
-                            continue
-                        frame_target = max(frame_target, frame)
+                        if frame > frame_current:
+                            frame_target = min(frame_target, frame)
 
         if frame_target > 0 and frame_target != 100_000_000:
             context.scene.frame_current = int(frame_target)

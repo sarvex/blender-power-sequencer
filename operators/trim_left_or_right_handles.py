@@ -74,7 +74,7 @@ class POWER_SEQUENCER_OT_trim_left_or_right_handles(bpy.types.Operator):
         for s in sequences:
             if self.side == "LEFT":
                 s.select_left_handle = True
-            if self.side == "RIGHT":
+            elif self.side == "RIGHT":
                 s.select_right_handle = True
 
         # If trimming from the left, we need to save the start frame before trimming
@@ -94,8 +94,5 @@ class POWER_SEQUENCER_OT_trim_left_or_right_handles(bpy.types.Operator):
                 ripple_start_frame = max(
                     sequences, key=attrgetter("frame_final_end")
                 ).frame_final_end
-                bpy.ops.power_sequencer.gap_remove(frame=ripple_start_frame)
-            else:
-                bpy.ops.power_sequencer.gap_remove(frame=ripple_start_frame)
-
+            bpy.ops.power_sequencer.gap_remove(frame=ripple_start_frame)
         return {"FINISHED"}

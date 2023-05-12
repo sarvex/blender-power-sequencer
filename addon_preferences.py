@@ -44,7 +44,7 @@ class PowerSequencerPreferences(bpy.types.AddonPreferences):
             info = info[: info.find("Copyright")]
             print(info)
         except (OSError, subprocess.CalledProcessError):
-            error_message = "Path `{}` is not a valid ffmpeg executable".format(path)
+            error_message = f"Path `{path}` is not a valid ffmpeg executable"
         return error_message, info
 
     def draw(self, context):

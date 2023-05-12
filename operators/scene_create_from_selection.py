@@ -38,8 +38,6 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
         return context.selected_sequences
 
     def execute(self, context):
-        start_scene_name = context.scene.name
-
         if len(context.selected_sequences) != 0:
             selection = context.selected_sequences[:]
             selection_start_frame = min(
@@ -64,6 +62,8 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
                     continue
             bpy.ops.sequencer.select_all()
             bpy.ops.power_sequencer.preview_to_selection()
+
+            start_scene_name = context.scene.name
 
             # Back to start scene
             bpy.context.window.scene = bpy.data.scenes[start_scene_name]

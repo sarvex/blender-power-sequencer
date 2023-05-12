@@ -59,7 +59,7 @@ class POWER_SEQUENCER_OT_preview_closest_cut(bpy.types.Operator):
         duration_frame = convert_duration_to_frames(context, self.duration)
         start = preview_center - duration_frame / 2
         end = preview_center + duration_frame / 2
-        if not (preview_center > 1 and start > 1):
+        if preview_center <= 1 or start <= 1:
             return {"CANCELLED"}
 
         if scene.frame_preview_start == start and scene.frame_preview_end == end:

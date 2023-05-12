@@ -82,21 +82,18 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
         sequences = sorted(selection, key=attrgetter("channel", "frame_final_start"))
         if self.direction == "up":
             channel_offset = +1
-            sequences = [s for s in reversed(sequences)]
+            sequences = list(reversed(sequences))
 
         head = sequences[0]
-        if not self.keep_selection_offset or (
-            head.channel != 1 and self.keep_selection_offset
-        ):
+        if not self.keep_selection_offset or head.channel != 1:
             for s in sequences:
                 if self.trim_target_channel:
                     channel_trim = s.channel + channel_offset
-                    strips_in_trim_channel = [
+                    if strips_in_trim_channel := [
                         sequence
                         for sequence in context.sequences
                         if (sequence.channel == channel_trim)
-                    ]
-                    if strips_in_trim_channel:
+                    ]:
                         to_delete, to_trim = find_strips_in_range(
                             s.frame_final_start, s.frame_final_end, strips_in_trim_channel
                         )
@@ -111,7 +108,7 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
             if self.keep_selection_offset and not self.trim_target_channel:
                 start_frame = head.frame_final_start
                 x_difference = 0
-                while not head.channel == 1:
+                while head.channel != 1:
                     move_selection(context, sequences, -x_difference, channel_offset)
                     x_difference = head.frame_final_start - start_frame
                     if x_difference == 0:

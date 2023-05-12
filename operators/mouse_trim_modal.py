@@ -155,7 +155,7 @@ class POWER_SEQUENCER_OT_mouse_trim(bpy.types.Operator):
             self.trim_side = "start" if self.trim_side == "end" else "end"
 
         if event.type == self.event_ripple and event.value == "PRESS":
-            self.gap_remove = False if self.gap_remove else True
+            self.gap_remove = not self.gap_remove
 
         if event.type == self.event_select_mode and event.value == "PRESS":
             self.select_mode = "CONTEXT" if self.select_mode == "CURSOR" else "CURSOR"
@@ -191,9 +191,9 @@ class POWER_SEQUENCER_OT_mouse_trim(bpy.types.Operator):
     def update_frame(self, context, event):
         frame, channel = get_frame_and_channel(event)
         frame_trim = find_snap_candidate(context, frame) if event.ctrl else frame
-        setattr(self, "channel_" + self.trim_side, channel)
-        setattr(self, "trim_" + self.trim_side, frame_trim)
-        context.scene.frame_current = getattr(self, "trim_" + self.trim_side)
+        setattr(self, f"channel_{self.trim_side}", channel)
+        setattr(self, f"trim_{self.trim_side}", frame_trim)
+        context.scene.frame_current = getattr(self, f"trim_{self.trim_side}")
 
     def draw_start(self, context, event):
         """Initializes the drawing handler, see draw()"""
@@ -211,18 +211,24 @@ class POWER_SEQUENCER_OT_mouse_trim(bpy.types.Operator):
 
     def update_header_text(self, context, event):
         text = (
-            "Trim from {} to {}".format(self.trim_start, self.trim_end)
-            + ", "
-            + "({}) Gap Remove {}".format(
-                self.event_ripple_string, "ON" if self.gap_remove else "OFF"
+            (
+                (
+                    (
+                        (
+                            (
+                                f"Trim from {self.trim_start} to {self.trim_end}, "
+                                + f'({self.event_ripple_string}) Gap Remove {"ON" if self.gap_remove else "OFF"}'
+                            )
+                            + ", "
+                        )
+                        + f"({self.event_select_mode_string}) Mode: {self.select_mode.capitalize()}"
+                    )
+                    + ", "
+                )
+                + f'(Ctrl) Snap: {"ON" if event.ctrl else "OFF"}'
             )
             + ", "
-            + "({}) Mode: {}".format(self.event_select_mode_string, self.select_mode.capitalize())
-            + ", "
-            + "(Ctrl) Snap: {}".format("ON" if event.ctrl else "OFF")
-            + ", "
-            + "({}) Change Side".format(self.event_change_side)
-        )
+        ) + f"({self.event_change_side}) Change Side"
         context.area.header_text_set(text)
 
     def trim_apply(self, context, event):
@@ -231,12 +237,11 @@ class POWER_SEQUENCER_OT_mouse_trim(bpy.types.Operator):
         )[0]
         distance_to_start = abs(event.mouse_region_x - start_x)
 
-        is_cutting = (
+        if is_cutting := (
             self.trim_start == self.trim_end
             or event.is_tablet
             and distance_to_start <= self.TABLET_TRIM_DISTANCE_THRESHOLD
-        )
-        if is_cutting:
+        ):
             self.cut(context)
         else:
             self.trim(context)

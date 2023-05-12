@@ -115,7 +115,7 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
         sequencer_area = None
         for window in context.window_manager.windows:
             for area in window.screen.areas:
-                if not area.type == "SEQUENCE_EDITOR":
+                if area.type != "SEQUENCE_EDITOR":
                     continue
                 sequencer_area = {
                     "window": window,
@@ -172,8 +172,7 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
             else self.create_import_text_block("POWER_SEQUENCER_IMPORTS")
         )
         imported_files = json.loads(text_file.as_string())
-        files_to_import = [p for p in filepaths if p not in imported_files]
-        return files_to_import
+        return [p for p in filepaths if p not in imported_files]
 
     def import_videos(self, context, videos_filepaths):
         """
@@ -236,13 +235,8 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
     def set_selected_strips_proxies(self, context):
         proxy_sizes = ["25", "50", "75", "100"]
 
-        use_proxy = False
         prefs = get_preferences(context)
-        for size in proxy_sizes:
-            if hasattr(prefs, "proxy_" + size):
-                use_proxy = True
-                break
-
+        use_proxy = any(hasattr(prefs, f"proxy_{size}") for size in proxy_sizes)
         if not use_proxy:
             return
 

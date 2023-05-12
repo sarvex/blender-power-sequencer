@@ -88,17 +88,20 @@ class POWER_SEQUENCER_OT_gap_remove(bpy.types.Operator):
         strips_end = max(sorted_sequences, key=attrgetter("frame_final_end")).frame_final_end
 
         gap_frame = -1
-        if strips_start > frame:
-            strips_before_frame_start = [s for s in context.sequences if s.frame_final_end <= frame]
-            frame_target = 0
-            if strips_before_frame_start:
-                frame_target = max(
-                    strips_before_frame_start, key=attrgetter("frame_final_end")
-                ).frame_final_end
-            gap_frame = frame_target if frame_target < strips_start else frame
-        else:
-            gap_frame = strips_end
-        return gap_frame
+        if strips_start <= frame:
+            return strips_end
+        frame_target = (
+            max(
+                strips_before_frame_start, key=attrgetter("frame_final_end")
+            ).frame_final_end
+            if (
+                strips_before_frame_start := [
+                    s for s in context.sequences if s.frame_final_end <= frame
+                ]
+            )
+            else 0
+        )
+        return frame_target if frame_target < strips_start else frame
 
     def gaps_remove(self, context, sequence_blocks, gap_frame_start):
         """

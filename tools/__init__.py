@@ -10,7 +10,7 @@ def get_tool_classes():
     module_files = [
         f for f in os.listdir(this_file) if f.endswith(".py") and not f.startswith("__init__")
     ]
-    module_paths = ["." + os.path.splitext(f)[0] for f in module_files]
+    module_paths = [f".{os.path.splitext(f)[0]}" for f in module_files]
     classes = []
     for path in module_paths:
         module = importlib.import_module(path, package=__package__)

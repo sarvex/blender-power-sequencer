@@ -55,7 +55,7 @@ class POWER_SEQUENCER_OT_grab_sequence_handles(bpy.types.Operator):
         else:
             bpy.ops.sequencer.select_all(action="DESELECT")
             for s in selection:
-                if s.type in SequenceTypes.EFFECT and not s.type == "COLOR":
+                if s.type in SequenceTypes.EFFECT and s.type != "COLOR":
                     self.select_closest_handle(s.input_1)
                     try:
                         self.select_closest_handle(s.input_2)

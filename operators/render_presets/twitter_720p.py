@@ -19,10 +19,7 @@ if __name__ == "__main__":
     render.ffmpeg.ffmpeg_preset = "BEST"
 
     is_ntsc = render.fps != 25
-    if is_ntsc:
-        render.ffmpeg.gopsize = 18
-    else:
-        render.ffmpeg.gopsize = 15
+    render.ffmpeg.gopsize = 18 if is_ntsc else 15
     render.ffmpeg.use_max_b_frames = False
 
     render.ffmpeg.video_bitrate = 4000

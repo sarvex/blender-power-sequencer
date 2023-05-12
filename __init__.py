@@ -66,7 +66,7 @@ def register():
     keymaps = register_shortcuts(classes_operator)
     addon_keymaps += keymaps
 
-    print("Registered {} with {} modules".format(bl_info["name"], len(modules)))
+    print(f'Registered {bl_info["name"]} with {len(modules)} modules')
 
 
 def unregister():
@@ -90,4 +90,4 @@ def unregister():
     unregister_properties()
     unregister_handlers()
 
-    print("Unregistered {}".format(bl_info["name"]))
+    print(f'Unregistered {bl_info["name"]}')

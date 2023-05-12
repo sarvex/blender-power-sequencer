@@ -54,7 +54,7 @@ class POWER_SEQUENCER_OT_delete_direct(bpy.types.Operator):
             bpy.ops.power_sequencer.transitions_remove()
         bpy.ops.sequencer.delete()
 
-        report_message = "Deleted " + str(len(selection)) + " sequence"
+        report_message = f"Deleted {len(selection)} sequence"
         report_message += "s" if len(selection) > 1 else ""
         self.report({"INFO"}, report_message)
         return {"FINISHED"}

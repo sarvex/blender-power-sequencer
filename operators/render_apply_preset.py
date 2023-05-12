@@ -108,7 +108,7 @@ class POWER_SEQUENCER_OT_render_apply_preset(bpy.types.Operator):
         elif self.name_pattern == "scene":
             exported_file_name = context.scene.name
 
-        context.scene.render.filepath = "//" + exported_file_name + ".mp4"
+        context.scene.render.filepath = f"//{exported_file_name}.mp4"
 
         self.report({"INFO"}, "Render settings set to the {!s} preset".format(self.preset))
         return {"FINISHED"}

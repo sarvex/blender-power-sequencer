@@ -66,13 +66,9 @@ class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
             to_extend_right = [s for s in sequences if s.frame_final_end == sequences_frame_end]
 
             for s in to_extend_left:
-                s.frame_final_start = (
-                    frame_left if frame_left < sequences_frame_start else sequences_frame_start
-                )
+                s.frame_final_start = min(frame_left, sequences_frame_start)
             for s in to_extend_right:
-                s.frame_final_end = (
-                    frame_right if frame_right > sequences_frame_end else sequences_frame_end
-                )
+                s.frame_final_end = max(frame_right, sequences_frame_end)
         return {"FINISHED"}
 
 

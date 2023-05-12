@@ -61,7 +61,7 @@ class POWER_SEQUENCER_OT_toggle_waveforms(bpy.types.Operator):
                 0
             ].show_waveform
         else:
-            show_waveform = True if self.mode == "on" else False
+            show_waveform = self.mode == "on"
 
         for s in sequences:
             s.show_waveform = show_waveform

@@ -29,11 +29,7 @@ class POWER_SEQUENCER_OT_marker_snap_to_cursor(bpy.types.Operator):
     def execute(self, context):
         markers = context.scene.timeline_markers
 
-        selected_markers = []
-        for marker in markers:
-            if marker.select:
-                selected_markers.append(marker)
-
+        selected_markers = [marker for marker in markers if marker.select]
         if not selected_markers:
             return {"CANCELLED"}
         if len(selected_markers) > 1:

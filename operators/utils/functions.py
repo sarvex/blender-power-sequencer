@@ -51,9 +51,8 @@ def find_linked(context, sequences, selected_sequences):
         try:
             if e.input_1 not in sequences:
                 linked_sequences.append(e.input_1)
-            if e.input_count == 2:
-                if e.input_2 not in sequences:
-                    linked_sequences.append(e.input_2)
+            if e.input_count == 2 and e.input_2 not in sequences:
+                linked_sequences.append(e.input_2)
         except AttributeError:
             continue
 
@@ -247,7 +246,6 @@ def trim_strips(context, frame_start, frame_end, to_trim, to_delete=[]):
     initial_selection = context.selected_sequences
 
     for s in to_trim:
-        strips_in_target_channel = []
         # Cut strip longer than the trim range in three
         is_strip_longer_than_trim_range = (
             s.frame_final_start < trim_start and s.frame_final_end > trim_end
@@ -259,15 +257,13 @@ def trim_strips(context, frame_start, frame_end, to_trim, to_delete=[]):
             bpy.ops.sequencer.split(frame=trim_end, type="SOFT", side="LEFT")
             to_delete.append(context.selected_sequences[0])
 
-            for c in context.sequences:
-                if c.channel == s.channel:
-                    strips_in_target_channel.append(c)
-
+            strips_in_target_channel = [
+                c for c in context.sequences if c.channel == s.channel
+            ]
             if s in initial_selection:
                 initial_selection.append(strips_in_target_channel[0])
             continue
 
-        # Resize strips that overlap the trim range
         elif s.frame_final_start < trim_end and s.frame_final_end > trim_end:
             s.frame_final_start = trim_end
         elif s.frame_final_end > trim_start and s.frame_final_start < trim_start:
@@ -314,12 +310,13 @@ def find_closest_surrounding_cuts_frames(context, frame):
 
 def get_sequences_under_cursor(context):
     frame = context.scene.frame_current
-    under_cursor = [
+    return [
         s
         for s in context.sequences
-        if s.frame_final_start <= frame and s.frame_final_end >= frame and not s.lock
+        if s.frame_final_start <= frame
+        and s.frame_final_end >= frame
+        and not s.lock
     ]
-    return under_cursor
 
 
 def ripple_move(context, sequences, duration_frames, delete=False):
@@ -374,9 +371,12 @@ def find_strips_in_range(frame_start, frame_end, sequences, find_overlapping=Tru
             ):
                 strips_overlapping_range.append(s)
 
-        if find_overlapping:
-            if s.frame_final_start < frame_start and s.frame_final_end > frame_end:
-                strips_overlapping_range.append(s)
+        if (
+            find_overlapping
+            and s.frame_final_start < frame_start
+            and s.frame_final_end > frame_end
+        ):
+            strips_overlapping_range.append(s)
     return strips_inside_range, strips_overlapping_range
 
 

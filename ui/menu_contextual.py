@@ -24,7 +24,7 @@ class POWER_SEQUENCER_MT_contextual(bpy.types.Menu):
 
         selection = context.selected_sequences
         active_strip = context.scene.sequence_editor.active_strip
-        types = set([s.type for s in selection])
+        types = {s.type for s in selection}
 
         if active_strip.type == "GAMMA_CROSS":
             layout.operator(

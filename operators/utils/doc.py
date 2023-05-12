@@ -13,8 +13,7 @@ def doc_idname(s):
     """
     Returns the id_name of the operator to register shortcuts in Blender's keymaps or call from other operators.
     """
-    out = ".".join(map(str.lower, s.split("_OT_")))
-    return out
+    return ".".join(map(str.lower, s.split("_OT_")))
 
 
 def doc_name(s):

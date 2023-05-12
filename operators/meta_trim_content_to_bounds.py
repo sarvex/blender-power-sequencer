@@ -38,10 +38,8 @@ class POWER_SEQUENCER_OT_meta_trim_content_to_bounds(bpy.types.Operator):
                     to_delete.append(s)
                     continue
                 # trim strips on the meta's edges or longer than the meta's extents
-                if s.frame_final_start < start:
-                    s.frame_final_start = start
-                if s.frame_final_end > end:
-                    s.frame_final_end = end
+                s.frame_final_start = max(s.frame_final_start, start)
+                s.frame_final_end = min(s.frame_final_end, end)
         bpy.ops.sequencer.select_all(action="DESELECT")
         for s in to_delete:
             s.select = True

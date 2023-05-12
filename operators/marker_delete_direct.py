@@ -32,5 +32,5 @@ class POWER_SEQUENCER_OT_marker_delete_direct(bpy.types.Operator):
         selected_markers = [m for m in markers if m.select]
         for m in selected_markers:
             markers.remove(m)
-        self.report({"INFO"}, "Deleted %s markers." % len(selected_markers))
+        self.report({"INFO"}, f"Deleted {len(selected_markers)} markers.")
         return {"FINISHED"}

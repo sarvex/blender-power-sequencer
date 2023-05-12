@@ -47,10 +47,7 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
             return {"CANCELLED"}
 
         strip_1 = context.selected_sequences[0]
-        if len(context.selected_sequences) == 1:
-            strip_2 = self.find_closest_strip_vertical(context, strip_1, self.direction)
-        else:
-            strip_2 = context.selected_sequences[1]
+        strip_2 = context.selected_sequences[1]
         if not strip_2 or strip_1.lock or strip_2.lock:
             return {"CANCELLED"}
 
@@ -165,11 +162,10 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
             return False
 
         offset = strip.channel - init_channel
-        for s in group.keys():
-            if s.channel != group[s] + offset:
-                return False
-
-        return context.selected_sequences
+        return next(
+            (False for s in group.keys() if s.channel != group[s] + offset),
+            context.selected_sequences,
+        )
 
     def reconstruct(self, strip, init_channel, group, context):
         """
@@ -208,15 +204,19 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
             and s.frame_final_end <= strip.frame_final_end
         )
         if direction == "up":
-            strips_above = [s for s in strips_in_range if s.channel > strip.channel]
-            if not strips_above:
+            if strips_above := [
+                s for s in strips_in_range if s.channel > strip.channel
+            ]:
+                return min(strips_above, key=attrgetter("channel"))
+            else:
                 return
-            return min(strips_above, key=attrgetter("channel"))
         elif direction == "down":
-            strips_below = [s for s in strips_in_range if s.channel < strip.channel]
-            if not strips_below:
+            if strips_below := [
+                s for s in strips_in_range if s.channel < strip.channel
+            ]:
+                return max(strips_below, key=attrgetter("channel"))
+            else:
                 return
-            return max(strips_below, key=attrgetter("channel"))
 
     def are_linked(self, strip_1, strip_2):
         return (

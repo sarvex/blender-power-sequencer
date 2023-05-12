@@ -87,19 +87,15 @@ class POWER_SEQUENCER_OT_select_related_strips(bpy.types.Operator):
                  neighbours of neighbours and so on.
         """
         # Respects initial selection
-        init_selected_strips = [s for s in context.selected_sequences]
+        init_selected_strips = list(context.selected_sequences)
 
-        neighbours = []
         bpy.ops.sequencer.select_all(action="DESELECT")
         strip.select = True
         bpy.ops.transform.seq_slide(value=(0, 0))
         strip.select = False
-        for s in context.selected_sequences:
-            neighbours.append(s)
-
+        neighbours = list(context.selected_sequences)
         try:
-            neighbours.append(strip.input_1)
-            neighbours.append(strip.input_2)
+            neighbours.extend((strip.input_1, strip.input_2))
         except Exception:
             pass
 

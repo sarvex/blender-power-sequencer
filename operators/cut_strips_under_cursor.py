@@ -41,13 +41,10 @@ class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
         return self.execute(context)
 
     def execute(self, context):
-        # Deselect to trigger a call to select_strips_under_cursor below if the
-        # time cursor doesn't overlap any of the selected strip: if so, it
-        # can't cut anything!
-        deselect = True
-        for s in bpy.context.selected_sequences:
-            if s.frame_final_start <= context.scene.frame_current <= s.frame_final_end:
-                deselect = False
+        deselect = not any(
+            s.frame_final_start <= context.scene.frame_current <= s.frame_final_end
+            for s in bpy.context.selected_sequences
+        )
         if deselect:
             bpy.ops.sequencer.select_all(action="DESELECT")
         (context.selected_sequences or bpy.ops.power_sequencer.select_strips_under_cursor())

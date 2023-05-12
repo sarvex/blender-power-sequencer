@@ -14,8 +14,7 @@ def set_keymap_property(properties, property_name, value):
         setattr(properties, property_name, value)
     except AttributeError:
         print(
-            "Warning: property '%s' not found in keymap item '%s'"
-            % (property_name, properties.__class__.__name__)
+            f"Warning: property '{property_name}' not found in keymap item '{properties.__class__.__name__}'"
         )
     except Exception as e:
         print("Warning: %r" % e)

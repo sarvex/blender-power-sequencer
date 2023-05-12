@@ -73,7 +73,7 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
         if not scene.animation_data:
             scene.animation_data_create()
         if not scene.animation_data.action:
-            action = bpy.data.actions.new(scene.name + "Action")
+            action = bpy.data.actions.new(f"{scene.name}Action")
             scene.animation_data.action = action
 
         sequences = context.selected_sequences
@@ -105,7 +105,7 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
         sequence_string = "sequence" if len(faded_sequences) == 1 else "sequences"
         self.report(
             {"INFO"},
-            "Added fade animation to {} {}.".format(len(faded_sequences), sequence_string),
+            f"Added fade animation to {len(faded_sequences)} {sequence_string}.",
         )
         return {"FINISHED"}
 
@@ -144,13 +144,16 @@ def fade_find_or_create_fcurve(context, sequence, animated_property):
     that corresponds to the sequence.
     Returns the matching FCurve or creates a new one if the function can't find a match.
     """
-    fade_fcurve = None
     fcurves = context.scene.animation_data.action.fcurves
     searched_data_path = sequence.path_from_id(animated_property)
-    for fcurve in fcurves:
-        if fcurve.data_path == searched_data_path:
-            fade_fcurve = fcurve
-            break
+    fade_fcurve = next(
+        (
+            fcurve
+            for fcurve in fcurves
+            if fcurve.data_path == searched_data_path
+        ),
+        None,
+    )
     if not fade_fcurve:
         fade_fcurve = fcurves.new(data_path=searched_data_path)
     return fade_fcurve
@@ -224,7 +227,7 @@ class Fade:
             if self.type == "IN":
                 fade_end = sequence.frame_final_start + self.duration
                 keyframes = (k for k in fade_fcurve.keyframe_points if k.co[0] >= fade_end)
-            if self.type == "OUT":
+            elif self.type == "OUT":
                 fade_start = sequence.frame_final_end - self.duration
                 keyframes = (
                     k for k in reversed(fade_fcurve.keyframe_points) if k.co[0] <= fade_start
@@ -237,7 +240,7 @@ class Fade:
         return max_value if max_value > 0.0 else 1.0
 
     def __repr__(self):
-        return "Fade {}: {} to {}".format(self.type, self.start, self.end)
+        return f"Fade {self.type}: {self.start} to {self.end}"
 
 
 def calculate_duration_frames(context, duration_seconds):

@@ -99,16 +99,14 @@ class POWER_SEQUENCER_OT_concatenate_strips(bpy.types.Operator):
                     if not self.is_towards_left
                     else find_sequences_after(context, s)
                 )
-                to_concatenate = [
+                if to_concatenate := [
                     strip
                     for strip in candidates
                     if strip.channel == s.channel
                     and not strip.lock
                     and strip.type in SequenceTypes.CUTABLE
-                ]
-                if not to_concatenate:
-                    continue
-                self.concatenate(context, s, to_concatenate)
+                ]:
+                    self.concatenate(context, s, to_concatenate)
 
         else:
             for channel in channels:

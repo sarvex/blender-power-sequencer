@@ -37,9 +37,7 @@ class POWER_SEQUENCER_OT_ripple_delete(bpy.types.Operator):
         frame, channel = get_mouse_frame_and_channel(context, event)
         if not context.selected_sequences:
             bpy.ops.power_sequencer.select_closest_to_mouse(frame=frame, channel=channel)
-        if not context.selected_sequences:
-            return {"CANCELLED"}
-        return self.execute(context)
+        return self.execute(context) if context.selected_sequences else {"CANCELLED"}
 
     def execute(self, context):
         scene = context.scene
@@ -50,7 +48,7 @@ class POWER_SEQUENCER_OT_ripple_delete(bpy.types.Operator):
         audio_scrub_active = context.scene.use_audio_scrub
         context.scene.use_audio_scrub = False
 
-        channels = list(set([s.channel for s in selection]))
+        channels = list({s.channel for s in selection})
         selection_blocks = slice_selection(context, selection)
 
         is_single_channel = len(channels) == 1
@@ -76,7 +74,9 @@ class POWER_SEQUENCER_OT_ripple_delete(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            "Deleted " + str(selection_length) + " sequence" + "s" if selection_length > 1 else "",
+            f"Deleted {selection_length} sequences"
+            if selection_length > 1
+            else "",
         )
 
         context.scene.use_audio_scrub = audio_scrub_active
